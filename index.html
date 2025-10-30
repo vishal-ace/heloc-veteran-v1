@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Find Out if You Qualify</title>
+
+  <!-- RedTrack (paste EXACTLY as provided) -->
+  <script type="text/javascript" src="https://trck.swiftmortgagepro.com/track.js?rtkcmpid=68dff208f8c34b32db23ea68"></script>
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{--bg:#ffffff;--text:#1a1a1a;--muted:#f1f2f4;--primary:#2563eb;--primary-press:#1e4fc2;--accent:#ffd11a;--accent-press:#e6bd00;--danger:#e11d48;--card:#ffffff;--shadow:0 10px 30px rgba(17,24,39,.12)}
+    html,body{height:100%}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.55}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center}
+    #app{position:relative;width:100%;max-width:640px;min-height:100svh;overflow:hidden;background:var(--bg)}
+
+    /* Screens */
+    .screen{position:absolute;inset:0;padding:20px 16px 18px;display:flex;flex-direction:column;gap:clamp(12px,2.2vh,16px);opacity:0;transform:translateX(35px);transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .45s ease;pointer-events:none;z-index:0}
+    .screen.active{opacity:1;transform:translateX(0);pointer-events:auto;z-index:1}
+    .screen.exit-left{opacity:0;transform:translateX(-35px)}
+
+    .centered{display:flex;flex-direction:column;align-items:center;text-align:center}
+
+    .pill{align-self:center;background:#ef233c;color:#fff;border-radius:999px;padding:8px 14px;font-weight:700;font-size:12px;letter-spacing:.3px;margin-bottom:clamp(10px,2.2vh,18px)}
+    .title{font-size:clamp(26px,6vw,36px);line-height:1.15;font-weight:800;margin:2px 0 0}
+    .subtitle{font-size:clamp(14px,2.6vw,16px);color:#4b5563;margin:6px 0 2px}
+
+    .media{width:100%;height:clamp(200px,36vh,320px);border-radius:14px;background:
+      linear-gradient(to bottom, rgba(0,0,0,.0) 40%, rgba(0,0,0,.08) 100%),
+      url('images/hero1.jpg');
+      background-size:cover;background-position:center;border:1px solid #e5e7eb;box-shadow:var(--shadow);
+    }
+
+    .cta{margin-top:clamp(16px,4vh,28px)}
+    .btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;border-radius:14px;padding:clamp(16px,3vw,20px) clamp(18px,3.4vw,22px);font-weight:700;font-size:clamp(16px,2.8vw,18px);transition:transform .05s ease,filter .15s ease,background .15s ease;box-shadow:0 8px 14px rgba(37,99,235,.18)}
+    .btn:active{transform:translateY(1px) scale(.99);filter:saturate(.95)}
+    .btn.primary{background:var(--primary);color:#fff}
+    .btn.primary:active{background:var(--primary-press)}
+    .btn.accent{background:var(--accent);color:#111827;box-shadow:0 8px 14px rgba(250,204,21,.25)}
+    .btn.accent:active{background:var(--accent-press)}
+
+    /* Card look used on Q screens */
+    .card{background:var(--card);border:1px solid #e5e7eb;border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-top:clamp(8px,1.8vh,14px)}
+    .question{font-size:20px;font-weight:800;margin:2px 0 10px}
+    .progress{height:8px;border-radius:999px;background:#e5e7eb;overflow:hidden}
+    .bar{height:100%;width:0;background:#2563eb;border-radius:999px;transition:width .35s ease}
+
+    .option{display:block;width:100%;border:0;border-radius:12px;background:var(--accent);color:#111827;font-size:clamp(16px,2.8vw,18px);font-weight:800;padding:clamp(14px,2.6vw,18px) 16px;margin-top:12px;box-shadow:0 6px 12px rgba(250,204,21,.25);cursor:pointer}
+    .option:active{background:var(--accent-press)}
+
+    /* Processing screen */
+    .process-wrap{height:100%;display:flex;align-items:center;justify-content:center}
+    .process-card{background:#fff;border-radius:16px;border:1px solid #e5e7eb;box-shadow:var(--shadow);width:min(92%,360px);padding:28px 22px;text-align:center}
+    .spinner{width:52px;height:52px;border-radius:50%;border:4px solid #e5e7eb;border-top-color:#2563eb;margin:0 auto 16px;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .process-title{font-size:20px;font-weight:800;margin:6px 0}
+    .process-sub{color:#4b5563;font-size:14px}
+    .secure{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:#6b7280;font-size:12px}
+    .secure .dot{width:10px;height:10px;border-radius:50%;border:2px solid #9ca3af}
+
+    /* Desktop niceties */
+    @media (min-width:768px){
+      #app{max-width:680px;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;box-shadow:0 20px 60px rgba(0,0,0,.06)}
+      .screen{padding:28px 24px 22px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .screen{transition:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main id="app" aria-live="polite">
+
+      <!-- Screen 1: Hero -->
+      <section class="screen active" id="s1" role="region" aria-label="Intro">
+        <div class="centered">
+          <div class="pill">TIME IS LIMITED TO FILE!</div>
+          <h1 class="title">Veterans Struggling With Economic Hardship Are Eligible For Relief, Through This Program!</h1>
+          <p class="subtitle">Answer a few questions to find out if you qualify</p>
+        </div>
+        <div class="media" aria-label="Veteran with flag illustrative background"></div>
+        <div class="cta">
+          <button class="btn primary" id="cta">See If I Qualify <span aria-hidden>→</span></button>
+        </div>
+      </section>
+
+      <!-- Screen 2: Q1 -->
+      <section class="screen" id="s2" role="region" aria-label="Question 1">
+        <div class="centered">
+          <div class="pill">TIME IS LIMITED TO FILE!</div>
+          <h2 class="title">Find Out if You Qualify</h2>
+          <p class="subtitle"><a href="#" style="color:#2563eb;text-decoration:underline">Thousands</a> of Veterans have already received relief</p>
+        </div>
+        <div class="card">
+          <div class="progress" aria-hidden="true"><div class="bar" id="p2"></div></div>
+          <p class="question">Do you need extra money for debt, medical bills, or other expenses?</p>
+          <button class="option" data-next="#s3">Yes</button>
+          <button class="option" data-next="#s3">No</button>
+        </div>
+      </section>
+
+      <!-- Screen 3: Q2 -->
+      <section class="screen" id="s3" role="region" aria-label="Question 2">
+        <div class="centered">
+          <div class="pill">TIME IS LIMITED TO FILE!</div>
+          <h2 class="title">Find Out if You Qualify</h2>
+          <p class="subtitle"><a href="#" style="color:#2563eb;text-decoration:underline">Thousands</a> of Veterans have already received relief</p>
+        </div>
+        <div class="card">
+          <div class="progress" aria-hidden="true"><div class="bar" id="p3"></div></div>
+          <p class="question">Are you a veteran?</p>
+          <button class="option" data-next="#s4">Yes</button>
+          <button class="option" data-next="#s4">No</button>
+        </div>
+      </section>
+
+      <!-- Screen 4: Processing + auto-redirect -->
+      <section class="screen" id="s4" role="region" aria-label="Processing">
+        <div class="process-wrap">
+          <div class="process-card">
+            <div class="spinner" aria-hidden="true"></div>
+            <div class="process-title">Processing Application</div>
+            <div class="process-sub" id="status">Verifying eligibility status...</div>
+            <div class="secure"><span class="dot"></span><span>Secure VA Portal</span></div>
+            <a id="fallbackLink" href="#" style="display:block;margin-top:14px;color:#2563eb;font-weight:600">Continue if not redirected</a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Offer URL (Hop Link)
+    const OFFER_URL = 'https://trck.swiftmortgagepro.com/click';
+
+    const screens = Array.from(document.querySelectorAll('.screen'));
+    let index = 0;
+
+    function goTo(nextIndex){
+      if(nextIndex === index) return;
+      const curr = screens[index];
+      const next = screens[nextIndex];
+      curr.classList.remove('active');
+      curr.classList.add('exit-left');
+      next.classList.add('active');
+      // clean up the previous screen after animation
+      setTimeout(()=>curr.classList.remove('exit-left'),450);
+      index = nextIndex;
+    }
+
+    function setProgress(el, pct){ if(el) el.style.width = (pct*100)+'%'; }
+
+    // Screen 1 -> Screen 2
+    document.getElementById('cta').addEventListener('click',()=>{
+      setProgress(document.getElementById('p2'), .35);
+      goTo(1);
+    });
+
+    // Screen 2 -> Screen 3
+    document.querySelectorAll('#s2 .option').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        setProgress(document.getElementById('p3'), .65);
+        goTo(2);
+      })
+    });
+
+    // Screen 3 -> Screen 4
+    document.querySelectorAll('#s3 .option').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        goTo(3);
+        startProcessing();
+      })
+    });
+
+    // Processing behavior + timed redirect
+    function startProcessing(){
+      const link = document.getElementById('fallbackLink');
+      link.href = OFFER_URL;
+      const status = document.getElementById('status');
+      const steps = [
+        'Verifying eligibility status...',
+        'Checking service records...',
+        'Matching with available lenders...'
+      ];
+      let i=0;
+      const interval = setInterval(()=>{
+        i=(i+1)%steps.length;status.textContent = steps[i];
+      },1200);
+      setTimeout(()=>{ clearInterval(interval); window.location.href = OFFER_URL; }, 4600);
+    }
+
+    // Accessibility: allow Enter/Space to click focused buttons
+    document.addEventListener('keydown',e=>{
+      if((e.key==='Enter'||e.key===' ') && document.activeElement && document.activeElement.click){
+        const el=document.activeElement; if(el.classList.contains('btn')||el.classList.contains('option')){e.preventDefault();el.click();}
+      }
+    });
+  </script>
+</body>
+</html>
+
+
