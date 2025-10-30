@@ -139,8 +139,45 @@
   </div>
 
   <script>
-    // Offer URL (Hop Link)
-    const OFFER_URL = 'https://trck.swiftmortgagepro.com/click';
+    // Debug logging (set to false in production)
+    const DEBUG = true;
+    function debugLog(msg) {
+      if (DEBUG) console.log('[RedTrack Debug]', msg);
+    }
+
+    // Capture URL parameters from landing page
+    function getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const paramObj = {};
+      params.forEach((value, key) => {
+        paramObj[key] = value;
+      });
+      return paramObj;
+    }
+
+    // Build dynamic offer URL with campaign ID and all URL params
+    function buildOfferUrl() {
+      const params = getUrlParams();
+      let offerUrl = 'https://trck.swiftmortgagepro.com/click';
+      offerUrl += '?rtkcmpid=68dff208f8c34b32db23ea68';
+      Object.keys(params).forEach(key => {
+        offerUrl += `&${key}=${encodeURIComponent(params[key])}`;
+      });
+      return offerUrl;
+    }
+
+    // Offer URL (Hop Link) - now dynamic with tracking parameters
+    const OFFER_URL = buildOfferUrl();
+
+    // Debug on page load
+    window.addEventListener('load', () => {
+      debugLog('Page loaded');
+      debugLog('rt object exists: ' + (typeof rt !== 'undefined'));
+      debugLog('Campaign ID: ' + (typeof rtCmpId !== 'undefined' ? rtCmpId : 'NOT FOUND'));
+      const params = getUrlParams();
+      debugLog('URL Parameters: ' + JSON.stringify(params));
+      debugLog('Built offer URL: ' + OFFER_URL);
+    });
 
     const screens = Array.from(document.querySelectorAll('.screen'));
     let index = 0;
